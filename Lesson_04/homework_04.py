@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import Generator
 
@@ -21,9 +22,11 @@ def filter_lines(filename: Path, pattern: str) -> Generator:
                 yield line
 
 
-def lines_writer_to_file() -> None:
-    for item in filtered_items:
-        with open(RESULT_FILENAME, "a", encoding="utf-8") as result_file:
+def lines_writer_to_file(path_to_file, filtered_items) -> None:
+    if asizeof.basicsize(path_to_file) > 0:
+        os.remove(path_to_file)
+    with open(path_to_file, "a", encoding="utf-8") as result_file:
+        for item in filtered_items:
             result_file.write(item + "\n")
 
 
@@ -32,12 +35,26 @@ def lines_counter(input_file) -> int:
         return sum(1 for _ in file)
 
 
-def size_counter(input_file):
+def size_counter(input_file) -> int:
     return asizeof.basicsize(input_file)
 
 
-filtered_items = list(filter_lines(ROCKYOU_FILENAME, USER_PATTERN))
+def main():
+    filtered_items = list(filter_lines(ROCKYOU_FILENAME, USER_PATTERN))
+    lines_writer_to_file(RESULT_FILENAME, filtered_items)
+    total_lines = lines_counter(RESULT_FILENAME)
+    file_size = size_counter(RESULT_FILENAME)
+    if total_lines == 0:
+        print(
+            f"Seems, like we found nothing in {ROCKYOU_FILENAME}. "
+            f"Please, try again with another request"
+        )
+    elif total_lines > 0:
+        print(
+            f"There are {total_lines} lines in {RESULT_FILENAME},"
+            f" \nFile size is: {file_size} kb"
+        )
 
-print(lines_counter(RESULT_FILENAME))
-print(size_counter(RESULT_FILENAME))
-print(len(filtered_items))
+
+if __name__ == "__main__":
+    main()
