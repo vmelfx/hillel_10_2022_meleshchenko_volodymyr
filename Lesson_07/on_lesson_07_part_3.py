@@ -16,7 +16,7 @@ class ExchangeRatesService:
     _instance = None
     _initialized = False
 
-    def __new__(cls, *args, **kwargsa):
+    def __new__(cls, *args, **kwargs):
         if cls._instance:
             return cls._instance
         cls._instance = super().__new__(cls)
