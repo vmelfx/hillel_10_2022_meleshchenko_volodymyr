@@ -52,6 +52,7 @@ class ExchangeRatesService:
     def __init__(self) -> None:
         if self._initialized:
             return
+        self._initialized = True
 
     @staticmethod
     def convert(base_price: Price) -> Price:
